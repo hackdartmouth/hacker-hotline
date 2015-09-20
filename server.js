@@ -27,7 +27,6 @@ var bodyparser = require('body-parser');
 var express = require('express');
 app = express();
 
-// TODO: WHY IS CSS STILL NOT LOADING
 app.use(express.static(path.join(__dirname, 'static')));
 app.use(bodyparser());
 
@@ -39,10 +38,6 @@ var Firebase = require('firebase');
 var firebaseClient = new Firebase('https://brilliant-fire-6090.firebaseio.com/');
 var firebaseRequests = firebaseClient.child('requests');
 var firebaseMentors = firebaseClient.child('mentors');
-
-app.get('/', function(req, res){
-	res.sendFile(path.join(__dirname, '/index.html'));
-});
 
 // register help request with Firebase
 app.post('/submit-request', function(req, res){
@@ -74,7 +69,7 @@ app.get('/test', function(req, res){
 						formatString += 'location: ' + currentRequest['location'] + '\n';
 						formatString += 'problem description: ' + currentRequest['problem-description'] + '\n';
 
-						
+
 						// send message to mentor
 /*						twilioClient.sendMessage({
 							'to' : currentMentor['number'],
@@ -97,7 +92,7 @@ app.get('/test', function(req, res){
 
 						);
 
-*/						
+*/
 
 						res.send(formatString);
 						firebaseRequests.child(childSnapshot.key()).remove();
