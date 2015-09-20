@@ -10,7 +10,7 @@ shitty hardcoded dictionary of mentors and their areas of expertise
 var mentors = {
 	'mentor1' : {
 		'name' : 'test',
-		'number' : '+15556667777',
+		'number' : '+13108835289',
 		'expertise' : ['#halp']
 	},
 
@@ -20,18 +20,18 @@ var mentors = {
 	}
 }
 
-var TWILIO_NUMBER =  '+16203591047';
 var fs = require('fs');
 var path = require('path');
 var bodyparser = require('body-parser');
 var express = require('express');
+var config = require('./config.json');
 app = express();
 
 app.use(express.static(path.join(__dirname, 'static')));
 app.use(bodyparser());
 
 // twilio client
-//var twilioClient = require('twilio')('ACCOUNT_SID', 'AUTH_TOKEN');
+var twilioClient = require('twilio')(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN);
 
 // firebase client
 var Firebase = require('firebase');
@@ -39,13 +39,18 @@ var firebaseClient = new Firebase('https://brilliant-fire-6090.firebaseio.com/')
 var firebaseRequests = firebaseClient.child('requests');
 var firebaseMentors = firebaseClient.child('mentors');
 
-// register help request with Firebase
+
+// homepage
+app.get('/', function(req, res){
+	res.sendFile(path.join(__dirname, 'static/html/index.html'));
+});
+
+// register help request with Firebase; to tokenize tags here or on the frontend?
 app.post('/submit-request', function(req, res){
 	var entry = req.body;
-
 	entry['timestamp'] = Date.now();
 	firebaseRequests.push(entry);
-	res.sendFile(path.join(__dirname + '/success.html'));
+	res.sendFile(path.join(__dirname, '/static/html/success.html'));
 });
 
 // if mentor indicates is available to help, send next request to them and pop request from database
@@ -69,30 +74,28 @@ app.get('/test', function(req, res){
 						formatString += 'location: ' + currentRequest['location'] + '\n';
 						formatString += 'problem description: ' + currentRequest['problem-description'] + '\n';
 
-
 						// send message to mentor
-/*						twilioClient.sendMessage({
+						twilioClient.sendMessage({
 							'to' : currentMentor['number'],
-							'from' : TWILIO_NUMBER,
+							'from' : config.TWILIO_NUMBER,
 							'body' : formatString
 						}, function(err, responseData){
-
+							// print to error log
 						});
 
 						var confirmationMessage = '';
 						confirmationMessage += currentMentor['name'];
 						confirmationMessage += 'is on the way to help!';
 
-						// send message to participant
+						// send message to participant; TODO: currentRequest['number'] is undefined, async javascript at fault?
+						console.log(currentRequest['number']);
 						twilioClient.sendMessage({
-							'to' : currentRequest['number'];
-							'from' : TWILIO_NUMBER,
+							'to' : currentRequest['number'],
+							'from' : config.TWILIO_NUMBER,
 							'body' : confirmationMessage
 						}, function(err, responseData){
-
-						);
-
-*/
+							// print to error log
+						});
 
 						res.send(formatString);
 						firebaseRequests.child(childSnapshot.key()).remove();
