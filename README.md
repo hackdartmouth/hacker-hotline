@@ -1,8 +1,10 @@
 <h1>Hacker Hotline</h1>
-<h6>Connecting Mentors with Hackers</h6>
+<h6>Streamlining the hackathon mentorship process</h6>
 <p>This app is meant to streamline the mentorship process by allowing hackathon participants
-	 who need help to submit requests and subsequently dispatching available mentors to them.
-	 makes use of the Twilio/Firebase APIs and node.js.</p>
+who need help to submit requests and subsequently dispatching available mentors to them.
+makes use of the Twilio/Firebase APIs and node.js.</p>
+<p>To use this app, you will have to create a config.json file with information for your Twilio and Firebase accounts;
+see server.js variable names for what you should name each item in the config file.</p>
 <h3>TODO:</h3>
 <h6>absolutely necessary</h6>
 <ul>

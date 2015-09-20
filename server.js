@@ -35,7 +35,7 @@ var twilioClient = require('twilio')(config.TWILIO_ACCOUNT_SID, config.TWILIO_AU
 
 // firebase client
 var Firebase = require('firebase');
-var firebaseClient = new Firebase('https://brilliant-fire-6090.firebaseio.com/');
+var firebaseClient = new Firebase(config.FIREBASE_URL);
 var firebaseRequests = firebaseClient.child('requests');
 var firebaseMentors = firebaseClient.child('mentors');
 
@@ -103,6 +103,15 @@ app.get('/test', function(req, res){
 					}
 				}
 			}
+			// if no match found, help queue (for current mentor's expertise) is empty
+			var emptyQueueMessage = 'Looks like everyone\'s all set for the moment!';
+			twilioClient.sendMessage({
+				'to' : currentMentor['number'],
+				'from' : config.TWILIO_NUMBER,
+				'body' : emptyQueueMessage
+			}, function(err, responseData){
+				// print to error log
+			});
 		});
 	});
 });
