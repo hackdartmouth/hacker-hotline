@@ -7,11 +7,15 @@ body {
 	font-family: menlo;
 }
 
-input, textarea, button {
+input, textarea, button, select {
 	font-family: menlo;
 	border: 1px solid #6590B4;
 	border-radius: 3px;
 } 
+
+select {
+	width: 100%;
+}
 
 button {
 	background-color: #6590B4;

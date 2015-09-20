@@ -4,10 +4,11 @@
 	<title>Help Form</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="icon" href="/img/apple-touch-icon.png">
 	<script type="text/javascript">
 		// validate form submission
 		var validateForm = function(){
-
+			
 		}
 	</script>
 </head>
@@ -39,7 +40,34 @@
 				</div>
 				<div class="row form-row">
 					<div class="col-md-offset-4 col-md-4">
-						<input type="text" name="tags" placeholder="#enter #hashtags #like #this">
+						<p>#addTags #chooseAtLeastOne #becauseWe&lt;3hashtags</p>
+						<!-- These tags are currently hard-coded; would be great to dynamically generate from mentor database -->
+						<select name="tags" multiple="multiple">
+							<option>#HTML</option>
+							<option>#CSS</option>
+							<option>#SASS</option>
+							<option>#JavaScript</option>
+							<option>#AngularJS</option>
+							<option>#NodeJS</option>
+							<option>#D3</option>
+							<option>#Python</option>
+							<option>#Flask</option>
+							<option>#Ideation</option>
+							<option>#PostgreSQL</option>
+							<option>#Alembic</option>
+							<option>#RethinkDB</option>
+							<option>#indico.io</option>
+							<option>#MachineLearning</option>
+							<option>#DataScience</option>
+							<option>#TextAnalysis</option>
+							<option>#ImageAnalysis</option>
+							<option>#Web</option>
+							<option>#GitHub</option>
+							<option>#Webhosting</option>
+							<option>#AWS</option>
+							<option>#Microsoft</option>
+							<option>#Intralinks</option>
+						</select>
 					</div>
 				</div>
 				<div class="row"><div class="text-center"><button type="submit" class="btn btn-lg form-large" onclick="validateForm()">Submit Request</button></div></div>

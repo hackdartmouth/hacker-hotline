@@ -9,7 +9,6 @@ see server.js variable names for what you should name each item in the config fi
 <h6>absolutely necessary</h6>
 <ul>
 	<li>Form input validation</li>
-	<li>Turn #hashtag input field into a list of items mentors can help with and have users choose from list?</li>
 	<li>Modify text message handling function to respond to text messages</li>
 	<li>Check mentor messages against phone numbers in database to select mentor</li>
 	<li>Test robustness of app</li>
