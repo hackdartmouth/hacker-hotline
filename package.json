@@ -1,0 +1,25 @@
+{
+  "name": "hacker_hotline",
+  "version": "0.0.0",
+  "description": "This app is meant to streamline the mentorship process by allowing hackathon participants who need help to submit requests and subsequently dispatching available mentors to them. Makes use of the Twilio/Firebase APIs and node.js.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackdartmouth/hacker_hotline.git"
+  },
+  "author": "HackDartmouth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hackdartmouth/hacker_hotline/issues"
+  },
+  "homepage": "https://github.com/hackdartmouth/hacker_hotline#readme",
+  "dependencies": {
+    "body-parser": "^1.14.0",
+    "express": "^4.13.3",
+    "firebase": "^2.2.9"
+  }
+}
