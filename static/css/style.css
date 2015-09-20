@@ -1,0 +1,39 @@
+html{
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	font-family: menlo;
+}
+
+input, textarea, button {
+	font-family: menlo;
+	border: 1px solid #6590B4;
+	border-radius: 3px;
+} 
+
+button {
+	background-color: #6590B4;
+	color: #ffffff;
+}
+
+textarea {
+	height: 25vh;
+	width: 100%;
+	padding: 5px 0px 0px 10px;
+}
+
+form input {
+	width: 100%;
+	height: 30px;
+	padding-left: 10px;
+}
+
+#mentor-form {
+	margin-top: 5vh;
+}
+
+.form-row {
+	margin-bottom: 10px;
+}

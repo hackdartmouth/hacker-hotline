@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+	<title>Help Form</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="static/css/style.css">
+	<script type="text/javascript">
+		// validate form submission
+		var validateForm = function(){
+
+		}
+	</script>
+</head>
+<body class="container-fluid">
+	<div class="text-center row" style="margin-top: 10vh">
+		<div class="col-md-12" id="header">
+			<div class="row"><h1><strong>Halp!</strong></h1></div>
+			<div class="row"><p class="col-md-offset-3 col-md-6">Stuck on something? Don't worry, we gotcha covered. Submit a request through the following form and a mentor will be with you ASAP!</p></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<form id="mentor-form" name="mentor-request" action="/submit-request" method="POST">
+				<div class="row form-row">
+					<div class="col-md-offset-4 col-md-4"><input type="text" name="name" placeholder="Name"></div>
+				</div>
+				<div class="row form-row">
+					<div class="col-md-offset-4 col-md-4"><input type="text" name="phone" placeholder="Phone +x (xxx) xxx-xxxx"></div>
+				</div>
+				<div class="row form-row">
+					<div class="col-md-offset-4 col-md-4">
+						<input type="text" name="location" placeholder="Where are you working?">
+					</div>
+				</div>
+				<div class="row form-row">
+					<div class="col-md-offset-4 col-md-4">
+						<textarea name="problem-description" placeholder="Please describe what you need help with."></textarea>
+					</div>
+				</div>
+				<div class="row form-row">
+					<div class="col-md-offset-4 col-md-4">
+						<input type="text" name="tags" placeholder="#enter #hashtags #like #this">
+					</div>
+				</div>
+				<div class="row"><div class="text-center"><button type="submit" class="btn btn-lg form-large" onclick="validateForm()">Submit Request</button></div></div>
+			</form>
+		</div>
+	</div>
+	<br />
+</body>
+</html>
