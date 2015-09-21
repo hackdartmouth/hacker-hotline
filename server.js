@@ -18,7 +18,6 @@ app.use(bodyparser());
 // twilio client
 var twilio = require('twilio');
 var twilioClient = twilio(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN);
-var myTwimlResponse = new twilio.TwimlResponse();
 
 // firebase client
 var Firebase = require('firebase');
@@ -40,60 +39,71 @@ app.post('/submit-request', function(req, res){
 });
 
 // if mentor indicates is available to help, send next request to them and pop request from database
-// TODO: make this function respond to incoming Twilio text messages
+http.createServer(function(req, res){
+
+
+}).listen(15476);
 app.get('/mentor', function(req, res){
+	var myTwimlResponse = new twilio.TwimlResponse();
 	firebaseRequests.orderByChild('timestamp').once('value',function(snapshot){
 		snapshot.forEach(function(childSnapshot){
 			// currently hard-coded; eventually convert to a lookup in the mentors database for the corresponding mentor's data
 			var currentMentor = config.mentors['mentor1'];
+			var noMatch = true;
 			for(var i = 0; i < currentMentor['expertise'].length; i++){
 				var skill = currentMentor['expertise'][i];
 				var currentRequest = childSnapshot.val();
 				
+				// if only a single tag, Firebase returns tags as a string rather than list, so convert to list	
+				if(typeof currentRequest['tags'] === "string") currentRequest['tags'] = [currentRequest['tags']];
+
 				for(var j = 0; j < currentRequest['tags'].length; j++){
 					var need = currentRequest['tags'][j];
 					if(skill == need){
+						noMatch = false;
 						// send message to mentor
 						var formatString = '';
 						formatString += 'name: ' + currentRequest['name'] + '\n';
 						formatString += 'location: ' + currentRequest['location'] + '\n';
 						formatString += 'problem description: ' + currentRequest['problem-description'] + '\n';
 						twilioClient.sendMessage({
-							'to' : currentMentor['number'],
+							'to' : currentMentor['phone'],
 							'from' : config.TWILIO_NUMBER,
 							'body' : formatString
 						}, function(err, responseData){
 							// print to error log
 						});
 						
-						// send message to participant; TODO: currentRequest['number'] is undefined, async javascript at fault?
+						// send message to participant
 						var confirmationMessage = '';
 						confirmationMessage += currentMentor['name'];
-						confirmationMessage += 'is on the way to help!';
-						
+						confirmationMessage += ' is on the way to help!';
+
 						twilioClient.sendMessage({
-							'to' : currentRequest['number'],
+							'to' : currentRequest['phone'],
 							'from' : config.TWILIO_NUMBER,
 							'body' : confirmationMessage
 						}, function(err, responseData){
 							// print to error log
 						});
-						res.send('mentor on the way.');
+
 						firebaseRequests.child(childSnapshot.key()).remove();
 						return true;
 					}
 				}
 			}
+
 			// if no match found, help queue (for current mentor's expertise set) is empty
-			var emptyQueueMessage = 'Looks like everyone\'s all set for the moment!';
-			twilioClient.sendMessage({
-				'to' : currentMentor['number'],
-				'from' : config.TWILIO_NUMBER,
-				'body' : emptyQueueMessage
-			}, function(err, responseData){
-				// print to error log
-			});
-			res.send('complete');
+			if(noMatch){
+				var emptyQueueMessage = 'Looks like everyone\'s all set for the moment!';
+				twilioClient.sendMessage({
+					'to' : currentMentor['phone'],
+					'from' : config.TWILIO_NUMBER,
+					'body' : emptyQueueMessage
+				}, function(err, responseData){
+					// print to error log
+				});
+			}
 		});
 	});
 });
