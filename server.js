@@ -6,6 +6,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var http = require('http');
 var bodyparser = require('body-parser');
 var express = require('express');
 var config = require('./config.json');
@@ -15,7 +16,9 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use(bodyparser());
 
 // twilio client
-var twilioClient = require('twilio')(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN);
+var twilio = require('twilio');
+var twilioClient = twilio(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN);
+var myTwimlResponse = new twilio.TwimlResponse();
 
 // firebase client
 var Firebase = require('firebase');
@@ -25,7 +28,7 @@ var firebaseMentors = firebaseClient.child('mentors');
 
 // homepage
 app.get('/', function(req, res){
-	res.sendFile(path.join(__dirname, 'static/html/index.html'));
+	res.sendFile(path.join(__dirname, '/static/html/index.html'));
 });
 
 // register help request with Firebase
@@ -38,14 +41,15 @@ app.post('/submit-request', function(req, res){
 
 // if mentor indicates is available to help, send next request to them and pop request from database
 // TODO: make this function respond to incoming Twilio text messages
-app.get('/test', function(req, res){
-	var currentMentor = config.mentors['mentor1'];
+app.get('/mentor', function(req, res){
 	firebaseRequests.orderByChild('timestamp').once('value',function(snapshot){
 		snapshot.forEach(function(childSnapshot){
+			// currently hard-coded; eventually convert to a lookup in the mentors database for the corresponding mentor's data
+			var currentMentor = config.mentors['mentor1'];
 			for(var i = 0; i < currentMentor['expertise'].length; i++){
 				var skill = currentMentor['expertise'][i];
 				var currentRequest = childSnapshot.val();
-
+				
 				for(var j = 0; j < currentRequest['tags'].length; j++){
 					var need = currentRequest['tags'][j];
 					if(skill == need){
@@ -61,7 +65,7 @@ app.get('/test', function(req, res){
 						}, function(err, responseData){
 							// print to error log
 						});
-
+						
 						// send message to participant; TODO: currentRequest['number'] is undefined, async javascript at fault?
 						var confirmationMessage = '';
 						confirmationMessage += currentMentor['name'];
@@ -74,14 +78,13 @@ app.get('/test', function(req, res){
 						}, function(err, responseData){
 							// print to error log
 						});
-						// TODO: why is node.js saying that the message is already sent?
-						res.send(formatString);
+						res.send('mentor on the way.');
 						firebaseRequests.child(childSnapshot.key()).remove();
 						return true;
 					}
 				}
 			}
-			// if no match found, help queue (for current mentor's expertise) is empty
+			// if no match found, help queue (for current mentor's expertise set) is empty
 			var emptyQueueMessage = 'Looks like everyone\'s all set for the moment!';
 			twilioClient.sendMessage({
 				'to' : currentMentor['number'],
@@ -90,7 +93,7 @@ app.get('/test', function(req, res){
 			}, function(err, responseData){
 				// print to error log
 			});
-			res.send(emptyQueueMessage);
+			res.send('complete');
 		});
 	});
 });
