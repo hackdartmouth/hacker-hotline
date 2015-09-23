@@ -14,6 +14,7 @@ app = express();
 
 app.use(express.static(path.join(__dirname, 'static')));
 app.use(bodyparser());
+app.use(bodyparser.urlencoded());
 
 // twilio client
 var twilio = require('twilio');
@@ -44,35 +45,46 @@ http.createServer(function(req, res){
 
 }).listen(15476);
 app.get('/mentor', function(req, res){
-	var myTwimlResponse = new twilio.TwimlResponse();
+	// check to see if request is coming from Twilio
+	/*if(!twilio.validateExpressRequest(req, config.TWILIO_AUTH_TOKEN)){
+		res.end();
+		return;
+	}*/
 	firebaseRequests.orderByChild('timestamp').once('value',function(snapshot){
+		databaseIsEmpty = true;
 		snapshot.forEach(function(childSnapshot){
-			// currently hard-coded; eventually convert to a lookup in the mentors database for the corresponding mentor's data
-			var currentMentor = config.mentors['mentor1'];
+			// parse message to get sender's number, look up in mentor database
 			var noMatch = true;
+			var sender = req.query.From;
+			var currentMentor = config.mentors[sender];
+			
+			// check to make sure legit mentor; if not in database, ignore message
+			if(currentMentor == undefined){
+				res.end();
+				return;
+			}
+			
+			// otherwise, go through mentor's expertise
 			for(var i = 0; i < currentMentor['expertise'].length; i++){
 				var skill = currentMentor['expertise'][i];
 				var currentRequest = childSnapshot.val();
 				
 				// if only a single tag, Firebase returns tags as a string rather than list, so convert to list	
 				if(typeof currentRequest['tags'] === "string") currentRequest['tags'] = [currentRequest['tags']];
-
+				
 				for(var j = 0; j < currentRequest['tags'].length; j++){
 					var need = currentRequest['tags'][j];
 					if(skill == need){
+						var response = new twilio.TwimlResponse();
+
 						noMatch = false;
 						// send message to mentor
 						var formatString = '';
 						formatString += 'name: ' + currentRequest['name'] + '\n';
 						formatString += 'location: ' + currentRequest['location'] + '\n';
 						formatString += 'problem description: ' + currentRequest['problem-description'] + '\n';
-						twilioClient.sendMessage({
-							'to' : currentMentor['phone'],
-							'from' : config.TWILIO_NUMBER,
-							'body' : formatString
-						}, function(err, responseData){
-							// print to error log
-						});
+						var response = new twilio.TwimlResponse();
+						response.message(formatString);
 						
 						// send message to participant
 						var confirmationMessage = '';
@@ -88,6 +100,10 @@ app.get('/mentor', function(req, res){
 						});
 
 						firebaseRequests.child(childSnapshot.key()).remove();
+						res.writeHead(200, {
+							'Content-Type' : 'text/xml'
+						});
+						res.end(response.toString());
 						return true;
 					}
 				}
@@ -96,13 +112,13 @@ app.get('/mentor', function(req, res){
 			// if no match found, help queue (for current mentor's expertise set) is empty
 			if(noMatch){
 				var emptyQueueMessage = 'Looks like everyone\'s all set for the moment!';
-				twilioClient.sendMessage({
-					'to' : currentMentor['phone'],
-					'from' : config.TWILIO_NUMBER,
-					'body' : emptyQueueMessage
-				}, function(err, responseData){
-					// print to error log
+				var response = new twilio.TwimlResponse();
+				response.message(emptyQueueMessage);
+				res.writeHead(200, {
+					'Content-Type' : 'text/xml'
 				});
+				res.end(response.toString());
+				return;
 			}
 		});
 	});

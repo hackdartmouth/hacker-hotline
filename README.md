@@ -8,11 +8,10 @@ see server.js variable names for what you should name each item in the config fi
 <h3>TODO:</h3>
 <h6>absolutely necessary</h6>
 <ul>
-	<li>Form input validation</li>
-	<li>Modify text message handling function to respond to text messages</li>
-	<li>Check mentor messages against phone numbers in database to select mentor</li>
+	<li>Form input validation -- cannot have empty input or it will mess script up</li>
+	<li>Modify text message handling function to respond to text messages -- point url on twilio account</li>
+	<li>edge case: empty database</li>
 	<li>Test robustness of app</li>
-	<li>Store request #hashtags in Firebase as a list of tags</li>
 	<li>Input mentor data (going into production)</li>
 	<li>Deploy site (AWS, Azure)</li>
 </ul>
